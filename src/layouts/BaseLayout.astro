@@ -1,0 +1,35 @@
+---
+import SiteHeader from "../components/SiteHeader.astro";
+import "../styles/global.css";
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "记录学习过程，积累每一点进步。" } = Astro.props;
+const pageTitle = title === "首页" ? "CS Study Blog — 学习记录" : `${title} — CS Study Blog`;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f8f6" />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <div class="page-shell">
+      <SiteHeader />
+      <main>
+        <slot />
+      </main>
+      <footer class="site-footer">
+        <span>CS Study Blog</span>
+        <span>持续学习，慢慢积累。</span>
+      </footer>
+    </div>
+  </body>
+</html>

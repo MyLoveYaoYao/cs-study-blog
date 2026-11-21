@@ -1,0 +1,28 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="关于" description="关于这个学习记录博客，以及如何开始写下第一篇文章。">
+  <section class="page-intro">
+    <p class="eyebrow">关于这个角落</p>
+    <h1>关于</h1>
+    <p>这是一个用来记录学习过程的个人博客。</p>
+  </section>
+
+  <article class="about-content prose">
+    <h2>为什么写博客？</h2>
+    <p>
+      把学到的内容用自己的话整理一遍，可以帮助我们记住重点，也方便以后回顾。
+      这里可以记录笔记、练习中的问题，或任何值得留存的想法。
+    </p>
+
+    <h2>如何添加第一篇文章</h2>
+    <ol>
+      <li>打开项目中的 <code>src/content/posts/</code> 文件夹。</li>
+      <li>复制一个示例 Markdown 文件，并为新文件取一个简短的文件名。</li>
+      <li>编辑文章开头的标题、简介和日期，然后在下面写下正文。</li>
+      <li>保存并预览；确认内容无误后，将改动推送到 GitHub。</li>
+    </ol>
+    <p>关于如何在电脑上预览和发布网站，项目 README 中有一步步的说明。</p>
+  </article>
+</BaseLayout>
