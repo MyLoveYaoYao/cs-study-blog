@@ -1,0 +1,482 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="每日打卡" description="用日历、连续打卡和时段图表记录每天的学习。">
+  <section class="checkin-page">
+    <header class="checkin-heading">
+      <div>
+        <p class="eyebrow"><span class="eyebrow-dot"></span> 每天一点点，积累看得见</p>
+        <h1>学习打卡</h1>
+        <p>记下今天学了多久，让每一步都有迹可循。</p>
+      </div>
+      <div class="checkin-streak" aria-label="连续学习天数">
+        <span class="streak-icon" aria-hidden="true">✦</span>
+        <strong id="streak-count">—</strong>
+        <span>天连续学习</span>
+      </div>
+    </header>
+
+    <p id="storage-message" class="checkin-message" role="status" aria-live="polite">
+      正在读取本地打卡记录…
+    </p>
+
+    <section class="checkin-stats" aria-label="学习概览">
+      <article class="stat-card">
+        <span class="stat-icon stat-icon-green" aria-hidden="true">◷</span>
+        <div><p>累计学习</p><strong id="total-duration">—</strong></div>
+        <span id="record-count" class="stat-caption">—</span>
+      </article>
+      <article class="stat-card">
+        <span class="stat-icon stat-icon-peach" aria-hidden="true">✳</span>
+        <div>        <p id="month-stat-label">本月学习</p><strong id="month-duration">—</strong></div>
+        <span id="month-count" class="stat-caption">—</span>
+      </article>
+      <article class="stat-card stat-card-note">
+        <span class="stat-icon stat-icon-blue" aria-hidden="true">↗</span>
+        <div><p>保持自己的节奏</p><strong>每一步都算数</strong></div>
+      </article>
+    </section>
+
+    <div class="checkin-layout">
+      <section class="checkin-panel calendar-panel" aria-labelledby="calendar-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">学习足迹</p>
+            <h2 id="calendar-title">打卡日历</h2>
+          </div>
+          <div class="calendar-controls">
+            <button id="previous-month" class="icon-button" type="button" aria-label="上一个月">←</button>
+            <strong id="calendar-month" aria-live="polite">—</strong>
+            <button id="next-month" class="icon-button" type="button" aria-label="下一个月">→</button>
+          </div>
+        </div>
+        <div class="calendar-grid" role="grid" aria-label="每月学习打卡日历">
+          <div class="weekday" role="columnheader">日</div>
+          <div class="weekday" role="columnheader">一</div>
+          <div class="weekday" role="columnheader">二</div>
+          <div class="weekday" role="columnheader">三</div>
+          <div class="weekday" role="columnheader">四</div>
+          <div class="weekday" role="columnheader">五</div>
+          <div class="weekday" role="columnheader">六</div>
+          <div id="calendar-days" class="calendar-days" role="rowgroup"></div>
+        </div>
+        <div class="calendar-legend">
+          <span>学习时长</span>
+          <span class="legend-label">少</span>
+          <i class="heat-cell heat-none" aria-hidden="true"></i>
+          <i class="heat-cell heat-1" aria-hidden="true"></i>
+          <i class="heat-cell heat-2" aria-hidden="true"></i>
+          <i class="heat-cell heat-3" aria-hidden="true"></i>
+          <i class="heat-cell heat-4" aria-hidden="true"></i>
+          <span class="legend-label">多</span>
+        </div>
+      </section>
+
+      <section class="checkin-panel entry-panel" aria-labelledby="entry-title">
+        <div class="panel-heading entry-heading">
+          <div>
+            <p class="eyebrow">记录你的进度</p>
+            <h2 id="entry-title">今天的学习记录</h2>
+          </div>
+          <span class="entry-spark" aria-hidden="true">✧</span>
+        </div>
+        <form id="checkin-form" novalidate>
+          <label class="field-label" for="entry-date">打卡日期</label>
+          <input id="entry-date" name="date" type="date" required />
+
+          <label class="field-label" for="entry-duration">学习时长</label>
+          <div class="duration-input">
+            <input id="entry-duration" name="duration" type="number" min="0.1" max="24" step="0.1" inputmode="decimal" placeholder="例如 1.5" required />
+            <span>小时</span>
+          </div>
+          <p class="field-hint">可以填写 0.1 到 24 小时，支持一位小数。</p>
+
+          <fieldset class="period-field">
+            <legend class="field-label">学习时段</legend>
+            <div class="period-options">
+              <label><input type="radio" name="period" value="dawn" /><span aria-hidden="true">☀</span>清晨</label>
+              <label><input type="radio" name="period" value="morning" checked /><span aria-hidden="true">◉</span>上午</label>
+              <label><input type="radio" name="period" value="afternoon" /><span aria-hidden="true">☼</span>下午</label>
+              <label><input type="radio" name="period" value="evening" /><span aria-hidden="true">☾</span>晚上</label>
+            </div>
+          </fieldset>
+
+          <button id="save-checkin" class="button button-primary save-checkin" type="submit">
+            <span id="save-label">保存今日打卡</span><span aria-hidden="true">→</span>
+          </button>
+        </form>
+        <p class="privacy-note"><span aria-hidden="true">▣</span> 记录只保存在这台设备的当前浏览器中</p>
+      </section>
+
+      <section class="checkin-panel distribution-panel" aria-labelledby="distribution-title">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">找到你的节奏</p>
+            <h2 id="distribution-title">学习时段分布</h2>
+          </div>
+        </div>
+        <p id="distribution-empty" class="distribution-empty">
+          <span aria-hidden="true">✳</span>
+          <span>完成第一次打卡，<br />学习时段分布就会显示在这里。</span>
+        </p>
+        <div id="distribution-chart" class="distribution-chart" aria-label="学习时段统计" hidden></div>
+      </section>
+
+      <aside class="checkin-tip">
+        <span aria-hidden="true">✿</span>
+        <p><strong>给自己一个小小的肯定</strong><br />持续学习不必追求完美，今天的一点点，已经很棒了。</p>
+      </aside>
+    </div>
+    <p class="local-data-note">
+      <span aria-hidden="true">i</span>
+      数据保存在当前浏览器，不会上传或自动同步到其他设备。清理浏览器网站数据可能会删除打卡记录。
+    </p>
+  </section>
+
+  <script>
+    type Period = "dawn" | "morning" | "afternoon" | "evening";
+    type Checkin = { date: string; minutes: number; period: Period };
+
+    const storageKey = "cs-study-blog.checkins.v1";
+    const periodLabels: Record<Period, string> = {
+      dawn: "清晨",
+      morning: "上午",
+      afternoon: "下午",
+      evening: "晚上",
+    };
+    const periodIcons: Record<Period, string> = {
+      dawn: "☀",
+      morning: "◉",
+      afternoon: "☼",
+      evening: "☾",
+    };
+    function requiredElement<T extends Element>(selector: string): T {
+      const element = document.querySelector<T>(selector);
+      if (!element) throw new Error(`学习打卡页面缺少必要的界面元素：${selector}`);
+      return element;
+    }
+
+    const dateInput = requiredElement<HTMLInputElement>("#entry-date");
+    const durationInput = requiredElement<HTMLInputElement>("#entry-duration");
+    const form = requiredElement<HTMLFormElement>("#checkin-form");
+    const message = requiredElement<HTMLElement>("#storage-message");
+    const dayContainer = requiredElement<HTMLElement>("#calendar-days");
+    const monthLabel = requiredElement<HTMLElement>("#calendar-month");
+    const previousButton = requiredElement<HTMLButtonElement>("#previous-month");
+    const nextButton = requiredElement<HTMLButtonElement>("#next-month");
+    const distributionChart = requiredElement<HTMLElement>("#distribution-chart");
+    const distributionEmpty = requiredElement<HTMLElement>("#distribution-empty");
+
+    const today = new Date();
+    const todayKey = formatDate(today);
+    let selectedDate = todayKey;
+    let visibleMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+    let records = new Map<string, Checkin>();
+    let storageReady = true;
+
+    dateInput.max = todayKey;
+    dateInput.value = todayKey;
+
+    function formatDate(date: Date): string {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, "0");
+      const day = String(date.getDate()).padStart(2, "0");
+      return `${year}-${month}-${day}`;
+    }
+
+    function isValidDateKey(value: unknown): value is string {
+      if (typeof value !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return false;
+      const [year, month, day] = value.split("-").map(Number);
+      return formatDate(new Date(year, month - 1, day)) === value;
+    }
+
+    function setMessage(text: string, isError = false): void {
+      message.textContent = text;
+      message.classList.toggle("is-error", isError);
+      message.classList.toggle("is-success", !isError);
+    }
+
+    function readRecords(): Map<string, Checkin> {
+      const stored = window.localStorage.getItem(storageKey);
+      if (stored === null) return new Map();
+      const parsed: unknown = JSON.parse(stored);
+      if (
+        typeof parsed !== "object" || parsed === null ||
+        !("version" in parsed) || parsed.version !== 1 ||
+        !("records" in parsed) || !Array.isArray(parsed.records)
+      ) {
+        throw new Error("本地打卡数据格式无法识别，已保留原数据且不会覆盖。");
+      }
+
+      const loaded = new Map<string, Checkin>();
+      for (const item of parsed.records) {
+        if (
+          typeof item !== "object" || item === null ||
+          !("date" in item) || !isValidDateKey(item.date) ||
+          !("minutes" in item) || typeof item.minutes !== "number" ||
+          !Number.isInteger(item.minutes) || item.minutes < 6 || item.minutes > 1440 ||
+          !("period" in item) || typeof item.period !== "string" ||
+          !Object.hasOwn(periodLabels, item.period)
+        ) {
+          throw new Error("本地打卡数据中有无法读取的记录，已保留原数据且不会覆盖。");
+        }
+        if (loaded.has(item.date)) {
+          throw new Error("本地打卡数据中有重复日期，已保留原数据且不会覆盖。");
+        }
+        loaded.set(item.date, {
+          date: item.date,
+          minutes: item.minutes,
+          period: item.period as Period,
+        });
+      }
+      return loaded;
+    }
+
+    function persistRecords(nextRecords: Map<string, Checkin>): boolean {
+      try {
+        const sortedRecords = [...nextRecords.values()].sort((a, b) => a.date.localeCompare(b.date));
+        window.localStorage.setItem(storageKey, JSON.stringify({ version: 1, records: sortedRecords }));
+        return true;
+      } catch (error) {
+        const detail = error instanceof Error ? error.message : "未知浏览器错误";
+        setMessage(`保存失败，页面中的记录未更新。请检查浏览器存储空间或隐私设置后重试（${detail}）。`, true);
+        return false;
+      }
+    }
+
+    function durationLabel(minutes: number): string {
+      const hours = Math.floor(minutes / 60);
+      const remainingMinutes = minutes % 60;
+      if (hours === 0) return `${remainingMinutes} 分钟`;
+      if (remainingMinutes === 0) return `${hours} 小时`;
+      return `${hours} 小时 ${remainingMinutes} 分钟`;
+    }
+
+    function renderCalendar(): void {
+      const year = visibleMonth.getFullYear();
+      const month = visibleMonth.getMonth();
+      monthLabel.textContent = new Intl.DateTimeFormat("zh-CN", {
+        year: "numeric",
+        month: "long",
+      }).format(visibleMonth);
+      previousButton.disabled = !storageReady;
+      nextButton.disabled = !storageReady || (
+        year === today.getFullYear() && month >= today.getMonth()
+      );
+      dayContainer.replaceChildren();
+
+      const firstWeekday = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const cellCount = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
+      for (let cell = 0; cell < cellCount; cell++) {
+        const day = cell - firstWeekday + 1;
+        const wrapper = document.createElement("div");
+        wrapper.className = "calendar-cell";
+        wrapper.setAttribute("role", "gridcell");
+        if (day < 1 || day > daysInMonth) {
+          wrapper.setAttribute("aria-hidden", "true");
+          dayContainer.append(wrapper);
+          continue;
+        }
+
+        const key = formatDate(new Date(year, month, day));
+        const record = records.get(key);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "calendar-day";
+        button.textContent = String(day);
+        button.disabled = !storageReady || key > todayKey;
+        const heatLevel = !record ? 0 : record.minutes < 30 ? 1 : record.minutes < 60 ? 2 : record.minutes < 120 ? 3 : 4;
+        button.classList.add(heatLevel === 0 ? "heat-none" : `heat-${heatLevel}`);
+        if (key === todayKey) button.classList.add("is-today");
+        if (key === selectedDate) button.classList.add("is-selected");
+        button.setAttribute(
+          "aria-label",
+          `${year}年${month + 1}月${day}日${record ? `，学习${durationLabel(record.minutes)}，${periodLabels[record.period]}` : ""}${key === todayKey ? "，今天" : ""}`,
+        );
+        if (record) button.title = `${durationLabel(record.minutes)} · ${periodLabels[record.period]}`;
+        button.addEventListener("click", () => selectDate(key));
+        wrapper.append(button);
+        dayContainer.append(wrapper);
+      }
+    }
+
+    function selectDate(date: string): void {
+      selectedDate = date;
+      dateInput.value = date;
+      const record = records.get(date);
+      durationInput.value = record ? String((record.minutes / 60).toFixed(1)) : "";
+      const periodInput = document.querySelector<HTMLInputElement>(
+        `input[name="period"][value="${record?.period ?? "morning"}"]`,
+      );
+      if (periodInput) periodInput.checked = true;
+      const isEditing = Boolean(record);
+      document.querySelector("#entry-title")!.textContent = isEditing ? "修改这天的记录" : "记录学习时间";
+      document.querySelector("#save-label")!.textContent = isEditing ? "更新打卡记录" : "保存学习打卡";
+      renderCalendar();
+    }
+
+    function renderStats(): void {
+      const monthStatLabel = requiredElement<HTMLElement>("#month-stat-label");
+      if (!storageReady) {
+        document.querySelector("#streak-count")!.textContent = "—";
+        document.querySelector("#total-duration")!.textContent = "—";
+        document.querySelector("#record-count")!.textContent = "本地数据不可读";
+        document.querySelector("#month-duration")!.textContent = "—";
+        document.querySelector("#month-count")!.textContent = "本地数据不可读";
+        distributionEmpty.hidden = false;
+        distributionEmpty.textContent = "无法读取打卡数据，请先处理页面上方的提示。";
+        distributionChart.hidden = true;
+        return;
+      }
+
+      const allRecords = [...records.values()];
+      const totalMinutes = allRecords.reduce((sum, record) => sum + record.minutes, 0);
+      document.querySelector("#total-duration")!.textContent = durationLabel(totalMinutes);
+      document.querySelector("#record-count")!.textContent = `${allRecords.length} 天记录`;
+      const monthPrefix = `${visibleMonth.getFullYear()}-${String(visibleMonth.getMonth() + 1).padStart(2, "0")}-`;
+      const monthRecords = allRecords.filter((record) => record.date.startsWith(monthPrefix));
+      const monthMinutes = monthRecords.reduce((sum, record) => sum + record.minutes, 0);
+      monthStatLabel.textContent =
+        visibleMonth.getFullYear() === today.getFullYear() && visibleMonth.getMonth() === today.getMonth()
+          ? "本月学习"
+          : `${visibleMonth.getFullYear()}年${visibleMonth.getMonth() + 1}月学习`;
+      document.querySelector("#month-duration")!.textContent = durationLabel(monthMinutes);
+      document.querySelector("#month-count")!.textContent = `${monthRecords.length} 天记录`;
+
+      let streak = 0;
+      let streakDate = todayKey;
+      if (!records.has(streakDate)) {
+        const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+        streakDate = formatDate(yesterday);
+      }
+      while (records.has(streakDate)) {
+        streak++;
+        const [year, month, day] = streakDate.split("-").map(Number);
+        streakDate = formatDate(new Date(year, month - 1, day - 1));
+      }
+      document.querySelector("#streak-count")!.textContent = String(streak);
+      renderDistribution(allRecords, totalMinutes);
+    }
+
+    function renderDistribution(allRecords: Checkin[], totalMinutes: number): void {
+      if (allRecords.length === 0) {
+        distributionEmpty.hidden = false;
+        distributionChart.hidden = true;
+        return;
+      }
+      distributionEmpty.hidden = true;
+      distributionChart.hidden = false;
+      distributionChart.replaceChildren();
+      const totals: Record<Period, number> = {
+        dawn: 0,
+        morning: 0,
+        afternoon: 0,
+        evening: 0,
+      };
+      for (const record of allRecords) totals[record.period] += record.minutes;
+
+      for (const period of Object.keys(periodLabels) as Period[]) {
+        const minutes = totals[period];
+        const row = document.createElement("div");
+        row.className = "distribution-row";
+        row.setAttribute("aria-label", `${periodLabels[period]}：${durationLabel(minutes)}`);
+        const heading = document.createElement("div");
+        heading.className = "distribution-row-heading";
+        const label = document.createElement("span");
+        const icon = document.createElement("span");
+        icon.setAttribute("aria-hidden", "true");
+        icon.textContent = periodIcons[period];
+        label.append(icon, document.createTextNode(` ${periodLabels[period]}`));
+        const amount = document.createElement("strong");
+        amount.textContent = durationLabel(minutes);
+        heading.append(label, amount);
+        const track = document.createElement("div");
+        track.className = "distribution-track";
+        const bar = document.createElement("span");
+        bar.className = `distribution-bar period-${period}`;
+        bar.style.width = `${totalMinutes === 0 ? 0 : (minutes / totalMinutes) * 100}%`;
+        track.append(bar);
+        row.append(heading, track);
+        distributionChart.append(row);
+      }
+    }
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      if (!storageReady) return;
+      const date = dateInput.value;
+      const hours = Number(durationInput.value);
+      const selectedPeriod = document.querySelector<HTMLInputElement>('input[name="period"]:checked')?.value;
+      if (!isValidDateKey(date) || date > todayKey) {
+        setMessage("请选择今天或更早的有效日期。", true);
+        dateInput.focus();
+        return;
+      }
+      if (!Number.isFinite(hours) || hours < 0.1 || hours > 24) {
+        setMessage("学习时长请填写 0.1 到 24 小时之间的数字。", true);
+        durationInput.focus();
+        return;
+      }
+      if (!selectedPeriod || !Object.hasOwn(periodLabels, selectedPeriod)) {
+        setMessage("请选择一个学习时段后再保存。", true);
+        return;
+      }
+
+      const nextRecords = new Map(records);
+      const minutes = Math.round(hours * 60);
+      nextRecords.set(date, { date, minutes, period: selectedPeriod as Period });
+      if (!persistRecords(nextRecords)) return;
+      records = nextRecords;
+      selectedDate = date;
+      const [year, month] = date.split("-").map(Number);
+      visibleMonth = new Date(year, month - 1, 1);
+      setMessage(`${date} 的学习记录已保存。`);
+      selectDate(date);
+      renderStats();
+    });
+
+    dateInput.addEventListener("change", () => {
+      if (!isValidDateKey(dateInput.value) || dateInput.value > todayKey) {
+        setMessage("请选择今天或更早的有效日期。", true);
+        return;
+      }
+      const [year, month] = dateInput.value.split("-").map(Number);
+      visibleMonth = new Date(year, month - 1, 1);
+      setMessage("日期已更改，填写时长和时段后保存即可。");
+      selectDate(dateInput.value);
+    });
+
+    previousButton.addEventListener("click", () => {
+      visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() - 1, 1);
+      renderCalendar();
+      renderStats();
+    });
+    nextButton.addEventListener("click", () => {
+      if (nextButton.disabled) return;
+      visibleMonth = new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 1);
+      renderCalendar();
+      renderStats();
+    });
+
+    try {
+      records = readRecords();
+      setMessage(records.size === 0
+        ? "还没有打卡记录，完成第一次学习后记下来吧。"
+        : `已读取 ${records.size} 天学习记录。`);
+    } catch (error) {
+      storageReady = false;
+      const detail = error instanceof Error ? error.message : "未知读取错误";
+      setMessage(`无法读取本地打卡数据，原记录已保留，保存功能已暂停，避免覆盖数据。（${detail}）`, true);
+      for (const control of form.elements) {
+        if (control instanceof HTMLInputElement || control instanceof HTMLButtonElement) {
+          control.disabled = true;
+        }
+      }
+    }
+    renderCalendar();
+    renderStats();
+    selectDate(selectedDate);
+  </script>
+</BaseLayout>
