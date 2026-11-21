@@ -1,5 +1,6 @@
 ---
 import { cProjectStages } from "../data/c-projects";
+import { cProjectSolutions } from "../data/c-project-solutions";
 import BaseLayout from "../layouts/BaseLayout.astro";
 
 const baseUrl = import.meta.env.BASE_URL.endsWith("/")
@@ -14,12 +15,12 @@ const projectCount = cProjectStages.reduce((total, stage) => total + stage.proje
       <p class="eyebrow"><span class="eyebrow-dot"></span> 从第一行代码到综合应用</p>
       <h1>100 个 C 语言练手项目</h1>
       <p class="c-project-lede">
-        按阶段一步步练习。每个项目都有清楚的任务要求和实现注释，先自己动手，再用提示检查思路。
+        按阶段一步步练习。遇到困难可先看提示；需要对照时，再展开标准答案和关键实现步骤。
       </p>
       <div class="c-project-summary">
         <span><strong>{projectCount}</strong> 个项目</span>
         <span><strong>{cProjectStages.length}</strong> 个循序渐进阶段</span>
-        <span><strong>0</strong> 个完整答案，给自己留出思考空间</span>
+        <span><strong>{projectCount}</strong> 题配有提示与答案</span>
       </div>
     </header>
 
@@ -27,7 +28,7 @@ const projectCount = cProjectStages.reduce((total, stage) => total + stage.proje
       <span class="c-guide-icon" aria-hidden="true">✦</span>
       <div>
         <strong>怎么使用这份练习路线</strong>
-        <p>从第 1 题开始，先读要求并自己写程序。每题的“练习注释”是思路提示，不是完整答案。完成后试试空输入、边界值和错误输入；遇到困难时可以先跳过，再回来挑战。</p>
+        <p>从第 1 题开始，先读要求并自己写程序。卡住时先展开“查看提示”；仍不清楚时再看“标准答案”。答案会说明关键算法、C 语言实现步骤和容易忽略的边界，综合项目则提供模块拆解。建议先独立尝试，再对照答案并亲手重新写一遍。</p>
       </div>
     </aside>
 
@@ -69,9 +70,15 @@ const projectCount = cProjectStages.reduce((total, stage) => total + stage.proje
                     <strong><span aria-hidden="true">▸</span> 任务要求</strong>
                     <p>{project.requirements}</p>
                   </div>
-                  <div class="c-project-note">
-                    <strong><span aria-hidden="true">✎</span> 练习注释</strong>
-                    <p>{project.note}</p>
+                  <div class="c-project-assistance">
+                    <details class="c-assist-item c-assist-hint">
+                      <summary><span>查看提示</span><span class="c-assist-toggle" aria-hidden="true">＋</span></summary>
+                      <p>{project.note}</p>
+                    </details>
+                    <details class="c-assist-item c-assist-answer">
+                      <summary><span>查看标准答案</span><span class="c-assist-toggle" aria-hidden="true">＋</span></summary>
+                      <p>{cProjectSolutions[project.id]}</p>
+                    </details>
                   </div>
                 </div>
               </details>
