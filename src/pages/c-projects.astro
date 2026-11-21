@@ -15,7 +15,7 @@ const projectCount = cProjectStages.reduce((total, stage) => total + stage.proje
       <p class="eyebrow"><span class="eyebrow-dot"></span> 从第一行代码到综合应用</p>
       <h1>100 个 C 语言练手项目</h1>
       <p class="c-project-lede">
-        按阶段一步步练习。遇到困难可先看提示；需要对照时，再展开标准答案和关键实现步骤。
+        按阶段一步步练习。遇到困难可先看提示；需要对照时，再查看仓库中的完整可编译 C 源码。
       </p>
       <div class="c-project-summary">
         <span><strong>{projectCount}</strong> 个项目</span>
@@ -28,7 +28,7 @@ const projectCount = cProjectStages.reduce((total, stage) => total + stage.proje
       <span class="c-guide-icon" aria-hidden="true">✦</span>
       <div>
         <strong>怎么使用这份练习路线</strong>
-        <p>从第 1 题开始，先读要求并自己写程序。卡住时先展开“查看提示”；仍不清楚时再看“标准答案”。答案会说明关键算法、C 语言实现步骤和容易忽略的边界，综合项目则提供模块拆解。建议先独立尝试，再对照答案并亲手重新写一遍。</p>
+        <p>从第 1 题开始，先读要求并自己写程序。卡住时先展开“查看提示”；仍不清楚时再看“标准答案”，并进入仓库中的完整 C 源码。建议先独立尝试，再对照并亲手重新写一遍。</p>
       </div>
     </aside>
 
@@ -78,6 +78,22 @@ const projectCount = cProjectStages.reduce((total, stage) => total + stage.proje
                     <details class="c-assist-item c-assist-answer">
                       <summary><span>查看标准答案</span><span class="c-assist-toggle" aria-hidden="true">＋</span></summary>
                       <p>{cProjectSolutions[project.id]}</p>
+                      <div class="c-source-links">
+                        <a
+                          href={`https://github.com/MyLoveYaoYao/cs-study-blog/blob/main/solutions/${String(project.id).padStart(3, "0")}/main.c`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          查看完整 C 源码
+                        </a>
+                        <a
+                          href={`https://raw.githubusercontent.com/MyLoveYaoYao/cs-study-blog/main/solutions/${String(project.id).padStart(3, "0")}/main.c`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          下载源码
+                        </a>
+                      </div>
                     </details>
                   </div>
                 </div>

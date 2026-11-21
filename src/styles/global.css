@@ -1856,6 +1856,29 @@ main {
   color: #7e7b69;
 }
 
+.c-source-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 9px;
+}
+
+.c-source-links a {
+  padding: 6px 9px;
+  border: 1px solid #dddcca;
+  border-radius: 5px;
+  background: #fff;
+  color: #736f50;
+  font-size: 10px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.c-source-links a:hover {
+  border-color: #b9b58e;
+  color: #4f4c31;
+}
+
 .c-project-back {
   display: inline-flex;
   gap: 8px;
