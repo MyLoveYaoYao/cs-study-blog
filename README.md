@@ -54,10 +54,23 @@ GitHub Pages 的部署地址使用仓库名作为路径。本项目已按 `cs-st
 
 - 首页文字和欢迎区：`src/pages/index.astro`
 - 关于页面：`src/pages/about.astro`
+- 100 个循序渐进的 C 语言练手项目：导航中的“C练习”，项目内容位于 `src/data/c-projects.ts`
 - 文章：`src/content/posts/` 中的 Markdown 文件
 - 网站名称和导航：`src/components/SiteHeader.astro` 与 `src/layouts/BaseLayout.astro`
 - 颜色、间距和手机布局：`src/styles/global.css`
 - GitHub Pages 路径：`astro.config.mjs`
+
+## C 语言练习路线
+
+从导航栏的 **C练习** 或首页的 **100 个 C 练习** 按钮打开项目列表。路线分为 10 个阶段、每阶段 10 题；点开项目即可查看任务要求和“练习注释”（实现思路提示，不是完整答案）。建议先从第 1 题开始，完成后再进入下一阶段。
+
+第一次写程序时，将代码保存为 `main.c`，安装 GCC 后在终端编译：
+
+```sh
+gcc main.c -o main
+```
+
+Windows 运行 `.\main.exe`；macOS 或 Linux 运行 `./main`。如果系统提示找不到 `gcc`，说明还没有安装 C 编译器。
 
 ## 常用命令
 

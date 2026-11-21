@@ -52,17 +52,17 @@ import BaseLayout from "../layouts/BaseLayout.astro";
           </div>
         </div>
         <div class="calendar-grid" role="grid" aria-label="每月学习打卡日历">
-          <div class="weekday" role="columnheader">日</div>
-          <div class="weekday" role="columnheader">一</div>
-          <div class="weekday" role="columnheader">二</div>
-          <div class="weekday" role="columnheader">三</div>
-          <div class="weekday" role="columnheader">四</div>
-          <div class="weekday" role="columnheader">五</div>
-          <div class="weekday" role="columnheader">六</div>
+          <div class="weekday" role="rowheader">日</div>
+          <div class="weekday" role="rowheader">一</div>
+          <div class="weekday" role="rowheader">二</div>
+          <div class="weekday" role="rowheader">三</div>
+          <div class="weekday" role="rowheader">四</div>
+          <div class="weekday" role="rowheader">五</div>
+          <div class="weekday" role="rowheader">六</div>
           <div id="calendar-days" class="calendar-days" role="rowgroup"></div>
         </div>
         <div class="calendar-legend">
-          <span>学习时长</span>
+          <span>每个点代表一天 · 学习越久颜色越深</span>
           <span class="legend-label">少</span>
           <i class="heat-cell heat-none" aria-hidden="true"></i>
           <i class="heat-cell heat-1" aria-hidden="true"></i>
@@ -268,17 +268,13 @@ import BaseLayout from "../layouts/BaseLayout.astro";
 
       const firstWeekday = new Date(year, month, 1).getDay();
       const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const cellCount = Math.ceil((firstWeekday + daysInMonth) / 7) * 7;
-      for (let cell = 0; cell < cellCount; cell++) {
-        const day = cell - firstWeekday + 1;
+      for (let day = 1; day <= daysInMonth; day++) {
         const wrapper = document.createElement("div");
         wrapper.className = "calendar-cell";
         wrapper.setAttribute("role", "gridcell");
-        if (day < 1 || day > daysInMonth) {
-          wrapper.setAttribute("aria-hidden", "true");
-          dayContainer.append(wrapper);
-          continue;
-        }
+        const dayOffset = firstWeekday + day - 1;
+        wrapper.style.gridColumn = String(Math.floor(dayOffset / 7) + 2);
+        wrapper.style.gridRow = String((dayOffset % 7) + 1);
 
         const key = formatDate(new Date(year, month, day));
         const record = records.get(key);

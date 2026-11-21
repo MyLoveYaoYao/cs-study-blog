@@ -1,0 +1,86 @@
+---
+import { cProjectStages } from "../data/c-projects";
+import BaseLayout from "../layouts/BaseLayout.astro";
+
+const baseUrl = import.meta.env.BASE_URL.endsWith("/")
+  ? import.meta.env.BASE_URL
+  : `${import.meta.env.BASE_URL}/`;
+const projectCount = cProjectStages.reduce((total, stage) => total + stage.projects.length, 0);
+---
+
+<BaseLayout title="C语言练习路线" description="循序渐进的 100 个 C 语言练手项目，每题包含任务要求和实现注释。">
+  <section class="c-project-page">
+    <header class="c-project-hero">
+      <p class="eyebrow"><span class="eyebrow-dot"></span> 从第一行代码到综合应用</p>
+      <h1>100 个 C 语言练手项目</h1>
+      <p class="c-project-lede">
+        按阶段一步步练习。每个项目都有清楚的任务要求和实现注释，先自己动手，再用提示检查思路。
+      </p>
+      <div class="c-project-summary">
+        <span><strong>{projectCount}</strong> 个项目</span>
+        <span><strong>{cProjectStages.length}</strong> 个循序渐进阶段</span>
+        <span><strong>0</strong> 个完整答案，给自己留出思考空间</span>
+      </div>
+    </header>
+
+    <aside class="c-project-guide">
+      <span class="c-guide-icon" aria-hidden="true">✦</span>
+      <div>
+        <strong>怎么使用这份练习路线</strong>
+        <p>从第 1 题开始，先读要求并自己写程序。每题的“练习注释”是思路提示，不是完整答案。完成后试试空输入、边界值和错误输入；遇到困难时可以先跳过，再回来挑战。</p>
+      </div>
+    </aside>
+
+    <aside class="c-quickstart">
+      <strong>第一次写 C 程序？</strong>
+      <p>把代码存成 <code>main.c</code>。安装好 GCC 后，在终端运行 <code>gcc main.c -o main</code> 编译；Windows 运行 <code>.\main.exe</code>，macOS 或 Linux 运行 <code>./main</code>。如果终端提示找不到 gcc，先安装 C 编译器。</p>
+    </aside>
+
+    <nav class="c-stage-index" aria-label="练习阶段">
+      {cProjectStages.map((stage, index) => (
+        <a href={`#stage-${index + 1}`}>阶段 {index + 1}<span>{stage.projects.length} 题</span></a>
+      ))}
+    </nav>
+
+    <div class="c-stage-list">
+      {cProjectStages.map((stage, stageIndex) => (
+        <section id={`stage-${stageIndex + 1}`} class="c-stage">
+          <header class="c-stage-heading">
+            <span class="c-stage-number">{String(stageIndex + 1).padStart(2, "0")}</span>
+            <div>
+              <p class="eyebrow">第 {stageIndex + 1} 阶段 · 项目 {stage.projects[0].id}–{stage.projects[stage.projects.length - 1].id}</p>
+              <h2>{stage.title}</h2>
+              <p>{stage.introduction}</p>
+              <span class="c-stage-focus">练习重点：{stage.focus}</span>
+            </div>
+            <span class="c-stage-count">{stage.projects.length} 题</span>
+          </header>
+
+          <div class="c-project-list">
+            {stage.projects.map((project) => (
+              <details class="c-project">
+                <summary>
+                  <span class="c-project-number">{String(project.id).padStart(2, "0")}</span>
+                  <span class="c-project-title">{project.title}</span>
+                  <span class="c-project-toggle" aria-hidden="true">＋</span>
+                </summary>
+                <div class="c-project-body">
+                  <div class="c-project-requirement">
+                    <strong><span aria-hidden="true">▸</span> 任务要求</strong>
+                    <p>{project.requirements}</p>
+                  </div>
+                  <div class="c-project-note">
+                    <strong><span aria-hidden="true">✎</span> 练习注释</strong>
+                    <p>{project.note}</p>
+                  </div>
+                </div>
+              </details>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+
+    <a class="c-project-back" href={baseUrl}><span aria-hidden="true">←</span> 返回博客首页</a>
+  </section>
+</BaseLayout>
